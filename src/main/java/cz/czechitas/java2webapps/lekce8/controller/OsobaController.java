@@ -4,10 +4,12 @@ import cz.czechitas.java2webapps.lekce8.entity.Osoba;
 import cz.czechitas.java2webapps.lekce8.repository.OsobaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -48,7 +50,9 @@ public class OsobaController {
     @GetMapping("/{id:[0-9]+}")
     public ModelAndView detail(@PathVariable long id) {
         return new ModelAndView("detail")
-                .addObject("osoba", repository.findById(id).orElseThrow());
+                .addObject("osoba", repository.findById(id).orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+                ));
     }
 
     @PostMapping("/{id:[0-9]+}")
